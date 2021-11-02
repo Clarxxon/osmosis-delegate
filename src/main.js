@@ -138,7 +138,7 @@ window.onload = async () => {
 
     document.getElementById("address").append(accounts[0].address);
 };
-
+ // вся магия тут
 document.sendForm.onsubmit = () => {
     let recipient = document.sendForm.recipient.value;
     let amount = document.sendForm.amount.value;
