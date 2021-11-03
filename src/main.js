@@ -1,5 +1,4 @@
-const { SigningCosmosClient, MsgBeginRedelegate, Secp256k1HdWallet,
-    coin, coins } = require("@cosmjs/launchpad");
+const { SigningCosmosClient, MsgBeginRedelegate, coin, coins, BroadcastMode } = require("@cosmjs/launchpad");
 
 window.onload = async () => {
     // Keplr extension injects the offline signer that is compatible with cosmJS.
@@ -131,23 +130,35 @@ window.onload = async () => {
 
     // Initialize the gaia api with the offline signer that is injected by Keplr extension.
     const cosmJS = new SigningCosmosClient(
-        "https://lcd-osmosis.keplr.app/rest",
+        "https://lcd-osmosis.keplr.app/",
         accounts[0].address,
         offlineSigner,
     );
 
+    // const client = LcdClient.withExtensions({ apiUrl:"https://lcd-osmosis.keplr.app/" }, setupAuthExtension);
+    // const { account_number, sequence } = (await client.auth.account(accounts[0].address)).result.value;
+    // console.log(account_number, sequence);
+
+    // cosmJS.getSequence(accounts[0].address).then(res=>{
+    //     console.log(res);
+    // })
+
+    
+
     document.getElementById("address").append(accounts[0].address);
 };
- // вся магия тут
+
 document.sendForm.onsubmit = () => {
-    let recipient = document.sendForm.recipient.value;
+    let sequence = document.sendForm.sequence.value;
+    let oldval = document.sendForm.oldval.value;
     let amount = document.sendForm.amount.value;
+    let account_number = document.sendForm.account_number.value;
 
     amount = parseFloat(amount);
-    // if (isNaN(amount)) {
-    //     alert("Invalid amount");
-    //     return false;
-    // }
+    if (isNaN(amount)) {
+        alert("Invalid amount");
+        return false;
+    }
 
     amount *= 1000000;
     amount = Math.floor(amount);
@@ -162,10 +173,16 @@ document.sendForm.onsubmit = () => {
 
         // Initialize the gaia api with the offline signer that is injected by Keplr extension.
         const cosmJS = new SigningCosmosClient(
-            "https://lcd-osmosis.keplr.app/rest",
+
+            "https://lcd-osmosis.keplr.app/",
             accounts[0].address,
-            offlineSigner
+            offlineSigner,
+            undefined, undefined,
+            "sync"
+
         );
+
+        console.log(await cosmJS.getHeight());
 
         const msg = {
             type: "cosmos-sdk/MsgBeginRedelegate",
@@ -182,8 +199,48 @@ document.sendForm.onsubmit = () => {
             amount: coins(0, "uosmo")
         };
 
-        const result = cosmJS.signAndBroadcast([msg], fee);
-        console.log(cosmJS.broadcastTx([result],fee));
+
+        const chain_id = 'osmosis-1';
+        const offlineSigner1 = window.getOfflineSigner(chain_id);
+        const accounts1 = await offlineSigner1.getAccounts();
+
+
+        const tx = await offlineSigner1.signAmino(accounts1[0].address, {
+            "chain_id": "osmosis-1",
+            "account_number": account_number,
+            "sequence": sequence,
+            "fee": {
+                "gas": "250000",
+                "amount": [
+                    {
+                        "denom": "uosmo",
+                        "amount": "0"
+                    }
+                ]
+            },
+            "msgs": [
+                {
+                    "type": "cosmos-sdk/MsgBeginRedelegate",
+                    "value": {
+                        "delegator_address": accounts1[0].address,
+                        "validator_src_address": oldval,
+                        "validator_dst_address": "osmovaloper122yaxffys6rmv03nwwkmn3rvr5skzxl9lry2a5",
+                        "amount": {
+                            "denom": "uosmo",
+                            "amount": amount
+                        }
+                    }
+                }
+            ],
+            "memo": ""
+        }
+        );
+
+        console.log(tx);
+        const stdTx = { signatures: [tx.signature], msg: tx.signed.msgs, memo: tx.signed.memo, fee: tx.signed.fee };
+
+        const result = cosmJS.broadcastTx(stdTx)
+        window.keplr.sendTx(chain_id, stdTx, "sync")
 
         // const result = await cosmJS.sendTokens(recipient, [{
         //     denom: "uatom",
