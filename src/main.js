@@ -1,5 +1,5 @@
 const { SigningCosmosClient, MsgBeginRedelegate, coin, coins, BroadcastMode } = require("@cosmjs/launchpad");
-
+const chainId = "cosmoshub-4";
 window.onload = async () => {
     // Keplr extension injects the offline signer that is compatible with cosmJS.
     // You can get this offline signer from `window.getOfflineSigner(chainId:string)` after load event.
@@ -18,19 +18,19 @@ window.onload = async () => {
                 // If the same chain id is already registered, it will resolve and not require the user interactions.
                 await window.keplr.experimentalSuggestChain({
                     // Chain-id of the Cosmos SDK chain.
-                    chainId: "osmosis-1",
+                    chainId: 'cosmoshub-4',
                     // The name of the chain to be displayed to the user.
-                    chainName: "Osmosis",
+                    chainName: "Atom",
                     // RPC endpoint of the chain.
-                    rpc: "https://lcd-osmosis.keplr.app/rpc",
+                    rpc: "https://lcd-cosmoshub.keplr.app/rpc",
                     // REST endpoint of the chain.
-                    rest: "https://lcd-osmosis.keplr.app/rest",
+                    rest: "https://lcd-cosmoshub.keplr.app/rest",
                     // Staking coin information
                     stakeCurrency: {
                         // Coin denomination to be displayed to the user.
-                        coinDenom: "OSMO",
+                        coinDenom: "ATOM",
                         // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-                        coinMinimalDenom: "uosmo",
+                        coinMinimalDenom: "uatom",
                         // # of decimal points to convert minimal denomination to user-facing denomination.
                         coinDecimals: 6,
                         // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
@@ -69,7 +69,7 @@ window.onload = async () => {
                         // Coin denomination to be displayed to the user.
                         coinDenom: "OSMO",
                         // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-                        coinMinimalDenom: "uosmo",
+                        coinMinimalDenom: "uatom",
                         // # of decimal points to convert minimal denomination to user-facing denomination.
                         coinDecimals: 6,
                         // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
@@ -79,9 +79,9 @@ window.onload = async () => {
                     // List of coin/tokens used as a fee token in this chain.
                     feeCurrencies: [{
                         // Coin denomination to be displayed to the user.
-                        coinDenom: "OSMO",
+                        coinDenom: "ATOM",
                         // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-                        coinMinimalDenom: "uosmo",
+                        coinMinimalDenom: "uatom",
                         // # of decimal points to convert minimal denomination to user-facing denomination.
                         coinDecimals: 6,
                         // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
@@ -112,7 +112,7 @@ window.onload = async () => {
         }
     }
 
-    const chainId = "osmosis-1";
+    const chainId = "cosmoshub-4";
 
     // You should request Keplr to enable the wallet.
     // This method will ask the user whether or not to allow access if they haven't visited this website.
@@ -129,13 +129,13 @@ window.onload = async () => {
     const accounts = await offlineSigner.getAccounts();
 
     // Initialize the gaia api with the offline signer that is injected by Keplr extension.
-    const cosmJS = new SigningCosmosClient(
-        "https://lcd-osmosis.keplr.app/",
-        accounts[0].address,
-        offlineSigner,
-    );
+    // const cosmJS = new SigningCosmosClient(
+    //     "https://lcd-cosmoshub.keplr.app/",
+    //     accounts[0].address,
+    //     offlineSigner,
+    // );
 
-    // const client = LcdClient.withExtensions({ apiUrl:"https://lcd-osmosis.keplr.app/" }, setupAuthExtension);
+    // const client = LcdClient.withExtensions({ apiUrl:"https://lcd-cosmoshub.keplr.app/" }, setupAuthExtension);
     // const { account_number, sequence } = (await client.auth.account(accounts[0].address)).result.value;
     // console.log(account_number, sequence);
 
@@ -165,7 +165,7 @@ document.sendForm.onsubmit = () => {
 
     (async () => {
         // See above.
-        const chainId = "osmosis-1";
+        
         await window.keplr.enable(chainId);
         const offlineSigner = window.getOfflineSigner(chainId);
 
@@ -174,7 +174,7 @@ document.sendForm.onsubmit = () => {
         // Initialize the gaia api with the offline signer that is injected by Keplr extension.
         const cosmJS = new SigningCosmosClient(
 
-            "https://lcd-osmosis.keplr.app/",
+            "https://lcd-cosmoshub.keplr.app/",
             accounts[0].address,
             offlineSigner,
             undefined, undefined,
@@ -182,38 +182,21 @@ document.sendForm.onsubmit = () => {
 
         );
 
-        console.log(await cosmJS.getHeight());
+        //console.log(await cosmJS.getHeight());
 
-        const msg = {
-            type: "cosmos-sdk/MsgBeginRedelegate",
-            value: {
-                delegator_address: accounts[0].address,
-                validator_src_address: "osmovaloper16q8xd335y38xk2ul67mjg27vdnrcnklt4wx6kt",
-                validator_dst_address: "osmovaloper122yaxffys6rmv03nwwkmn3rvr5skzxl9lry2a5",
-                amount: coin(100000, "uosmo")
-            }
-        };
-
-        const fee = {
-            gas: "250000",
-            amount: coins(0, "uosmo")
-        };
-
-
-        const chain_id = 'osmosis-1';
-        const offlineSigner1 = window.getOfflineSigner(chain_id);
+        const offlineSigner1 = window.getOfflineSigner(chainId);
         const accounts1 = await offlineSigner1.getAccounts();
 
 
         const tx = await offlineSigner1.signAmino(accounts1[0].address, {
-            "chain_id": "osmosis-1",
+            "chain_id": chainId,
             "account_number": account_number,
             "sequence": sequence,
             "fee": {
                 "gas": "250000",
                 "amount": [
                     {
-                        "denom": "uosmo",
+                        "denom": "uatom",
                         "amount": "0"
                     }
                 ]
@@ -224,10 +207,10 @@ document.sendForm.onsubmit = () => {
                     "value": {
                         "delegator_address": accounts1[0].address,
                         "validator_src_address": oldval,
-                        "validator_dst_address": "osmovaloper122yaxffys6rmv03nwwkmn3rvr5skzxl9lry2a5",
+                        "validator_dst_address": "cosmosvaloper1gf4wlkutql95j7wwsxz490s6fahlvk2s9xpwax",
                         "amount": {
-                            "denom": "uosmo",
-                            "amount": amount
+                            "denom": "uatom",
+                            "amount": amount+""
                         }
                     }
                 }
@@ -240,7 +223,7 @@ document.sendForm.onsubmit = () => {
         const stdTx = { signatures: [tx.signature], msg: tx.signed.msgs, memo: tx.signed.memo, fee: tx.signed.fee };
 
         const result = cosmJS.broadcastTx(stdTx)
-        window.keplr.sendTx(chain_id, stdTx, "sync")
+        window.keplr.sendTx(chainId, stdTx, "sync")
 
         // const result = await cosmJS.sendTokens(recipient, [{
         //     denom: "uatom",
