@@ -150,7 +150,7 @@ window.onload = async () => {
 
 document.sendForm.onsubmit = () => {
     let sequence = document.sendForm.sequence.value;
-    let oldval = document.sendForm.oldval.value;
+    //let oldval = document.sendForm.oldval.value;
     let amount = document.sendForm.amount.value;
     let account_number = document.sendForm.account_number.value;
 
@@ -182,28 +182,11 @@ document.sendForm.onsubmit = () => {
 
         );
 
-        console.log(await cosmJS.getHeight());
-
-        const msg = {
-            type: "cosmos-sdk/MsgBeginRedelegate",
-            value: {
-                delegator_address: accounts[0].address,
-                validator_src_address: "osmovaloper16q8xd335y38xk2ul67mjg27vdnrcnklt4wx6kt",
-                validator_dst_address: "osmovaloper122yaxffys6rmv03nwwkmn3rvr5skzxl9lry2a5",
-                amount: coin(100000, "uosmo")
-            }
-        };
-
-        const fee = {
-            gas: "250000",
-            amount: coins(0, "uosmo")
-        };
-
+        //console.log(await cosmJS.getHeight());
 
         const chain_id = 'osmosis-1';
         const offlineSigner1 = window.getOfflineSigner(chain_id);
         const accounts1 = await offlineSigner1.getAccounts();
-
 
         const tx = await offlineSigner1.signAmino(accounts1[0].address, {
             "chain_id": "osmosis-1",
@@ -220,14 +203,14 @@ document.sendForm.onsubmit = () => {
             },
             "msgs": [
                 {
-                    "type": "cosmos-sdk/MsgBeginRedelegate",
+                    "type": "cosmos-sdk/MsgDelegate",
                     "value": {
                         "delegator_address": accounts1[0].address,
-                        "validator_src_address": oldval,
-                        "validator_dst_address": "osmovaloper122yaxffys6rmv03nwwkmn3rvr5skzxl9lry2a5",
+                        //"validator_src_address": oldval,
+                        "validator_address": "osmovaloper122yaxffys6rmv03nwwkmn3rvr5skzxl9lry2a5",
                         "amount": {
                             "denom": "uosmo",
-                            "amount": amount
+                            "amount": amount+""
                         }
                     }
                 }
