@@ -1,6 +1,8 @@
 const { SigningCosmosClient, MsgBeginRedelegate, coin, coins, BroadcastMode } = require("@cosmjs/launchpad");
+console.log("CONNECT");
 
 window.onload = async () => {
+    console.log("CONNECT");
     // Keplr extension injects the offline signer that is compatible with cosmJS.
     // You can get this offline signer from `window.getOfflineSigner(chainId:string)` after load event.
     // And it also injects the helper function to `window.keplr`.
@@ -18,19 +20,19 @@ window.onload = async () => {
                 // If the same chain id is already registered, it will resolve and not require the user interactions.
                 await window.keplr.experimentalSuggestChain({
                     // Chain-id of the Cosmos SDK chain.
-                    chainId: "osmosis-1",
+                    chainId: "akashnet-2",
                     // The name of the chain to be displayed to the user.
-                    chainName: "Osmosis",
+                    chainName: "Akash",
                     // RPC endpoint of the chain.
-                    rpc: "https://lcd-osmosis.keplr.app/rpc",
+                    rpc: "https://lcd-akash.keplr.app/rpc",
                     // REST endpoint of the chain.
-                    rest: "https://lcd-osmosis.keplr.app/rest",
+                    rest: "https://lcd-akash.keplr.app/rest",
                     // Staking coin information
                     stakeCurrency: {
                         // Coin denomination to be displayed to the user.
-                        coinDenom: "OSMO",
+                        coinDenom: "AKT",
                         // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-                        coinMinimalDenom: "uosmo",
+                        coinMinimalDenom: "uakt",
                         // # of decimal points to convert minimal denomination to user-facing denomination.
                         coinDecimals: 6,
                         // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
@@ -67,9 +69,9 @@ window.onload = async () => {
                     // List of all coin/tokens used in this chain.
                     currencies: [{
                         // Coin denomination to be displayed to the user.
-                        coinDenom: "OSMO",
+                        coinDenom: "AKT",
                         // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-                        coinMinimalDenom: "uosmo",
+                        coinMinimalDenom: "uakt",
                         // # of decimal points to convert minimal denomination to user-facing denomination.
                         coinDecimals: 6,
                         // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
@@ -79,9 +81,9 @@ window.onload = async () => {
                     // List of coin/tokens used as a fee token in this chain.
                     feeCurrencies: [{
                         // Coin denomination to be displayed to the user.
-                        coinDenom: "OSMO",
+                        coinDenom: "AKT",
                         // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-                        coinMinimalDenom: "uosmo",
+                        coinMinimalDenom: "uakt",
                         // # of decimal points to convert minimal denomination to user-facing denomination.
                         coinDecimals: 6,
                         // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
@@ -112,7 +114,8 @@ window.onload = async () => {
         }
     }
 
-    const chainId = "osmosis-1";
+    
+    const chainId = "akashnet-2";
 
     // You should request Keplr to enable the wallet.
     // This method will ask the user whether or not to allow access if they haven't visited this website.
@@ -127,24 +130,7 @@ window.onload = async () => {
     // But, currently, Keplr extension manages only one address/public key pair.
     // XXX: This line is needed to set the sender address for SigningCosmosClient.
     const accounts = await offlineSigner.getAccounts();
-
-    // Initialize the gaia api with the offline signer that is injected by Keplr extension.
-    const cosmJS = new SigningCosmosClient(
-        "https://lcd-osmosis.keplr.app/",
-        accounts[0].address,
-        offlineSigner,
-    );
-
-    // const client = LcdClient.withExtensions({ apiUrl:"https://lcd-osmosis.keplr.app/" }, setupAuthExtension);
-    // const { account_number, sequence } = (await client.auth.account(accounts[0].address)).result.value;
-    // console.log(account_number, sequence);
-
-    // cosmJS.getSequence(accounts[0].address).then(res=>{
-    //     console.log(res);
-    // })
-
-    
-
+    console.log(accounts)
     document.getElementById("address").append(accounts[0].address);
 };
 
@@ -165,7 +151,7 @@ document.sendForm.onsubmit = () => {
 
     (async () => {
         // See above.
-        const chainId = "osmosis-1";
+        const chainId = "akashnet-2";
         await window.keplr.enable(chainId);
         const offlineSigner = window.getOfflineSigner(chainId);
 
@@ -174,7 +160,7 @@ document.sendForm.onsubmit = () => {
         // Initialize the gaia api with the offline signer that is injected by Keplr extension.
         const cosmJS = new SigningCosmosClient(
 
-            "https://lcd-osmosis.keplr.app/",
+            "https://lcd-akash.keplr.app/",
             accounts[0].address,
             offlineSigner,
             undefined, undefined,
@@ -184,19 +170,19 @@ document.sendForm.onsubmit = () => {
 
         //console.log(await cosmJS.getHeight());
 
-        const chain_id = 'osmosis-1';
+        const chain_id = 'akashnet-2';
         const offlineSigner1 = window.getOfflineSigner(chain_id);
         const accounts1 = await offlineSigner1.getAccounts();
 
         const tx = await offlineSigner1.signAmino(accounts1[0].address, {
-            "chain_id": "osmosis-1",
+            "chain_id": "akashnet-2",
             "account_number": account_number,
             "sequence": sequence,
             "fee": {
                 "gas": "250000",
                 "amount": [
                     {
-                        "denom": "uosmo",
+                        "denom": "uakt",
                         "amount": "0"
                     }
                 ]
@@ -207,9 +193,9 @@ document.sendForm.onsubmit = () => {
                     "value": {
                         "delegator_address": accounts1[0].address,
                         //"validator_src_address": oldval,
-                        "validator_address": "osmovaloper122yaxffys6rmv03nwwkmn3rvr5skzxl9lry2a5",
+                        "validator_address": "akashvaloper1ksu368eh54vcqzruqk42dsnx88hvk8px09ws7q",
                         "amount": {
-                            "denom": "uosmo",
+                            "denom": "uakt",
                             "amount": amount+""
                         }
                     }
