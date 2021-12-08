@@ -1,4 +1,4 @@
-const { SigningCosmosClient, MsgBeginRedelegate, coin, coins, BroadcastMode } = require("@cosmjs/launchpad");
+const { SigningCosmosClient} = require("@cosmjs/launchpad");
 console.log("CONNECT");
 
 window.onload = async () => {
@@ -132,6 +132,8 @@ window.onload = async () => {
     const accounts = await offlineSigner.getAccounts();
     console.log(accounts)
     document.getElementById("address").append(accounts[0].address);
+
+    
 };
 
 document.sendForm.onsubmit = () => {
@@ -168,7 +170,7 @@ document.sendForm.onsubmit = () => {
 
         );
 
-        //console.log(await cosmJS.getHeight());
+       // console.log(await cosmJS.getHeight());
 
         const chain_id = 'akashnet-2';
         const offlineSigner1 = window.getOfflineSigner(chain_id);
